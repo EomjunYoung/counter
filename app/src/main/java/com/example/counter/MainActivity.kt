@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.example.counter.databinding.ActivityMainBinding
 
@@ -27,18 +28,28 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.counterText.text = "${viewModel.count}"
+//        binding.counterText.text = "${viewModel.count}"
 
+        //MutableLiveData를 상속받은 변수가 변할때마다 추적하기 위해 observe(관찰하는 것) 셋팅
+        viewModel.countLiveData.observe(this@MainActivity, Observer {
+            count -> binding.counterText.text = "$count"
+        })
+
+        /** 아래와같이 일일이 viewModel.count를 써서 값이 보여주는것이 아닌
+         * 위와같은 LiveData방식을 활용하면 값이 변할때마다 추적하여 값을 자동갱신시켜준다 **/
         binding.addButton.setOnClickListener {
 //            count++
-            viewModel.count++
-            binding.counterText.text = "${viewModel.count}"
+//            viewModel.count++
+//            binding.counterText.text = "${viewModel.count}"
+            viewModel.increaseCount()
         }
 
         binding.subButton.setOnClickListener {
 //            count--
-            viewModel.count--
-            binding.counterText.text = "${viewModel.count}"
+//            viewModel.count--
+//            binding.counterText.text = "${viewModel.count}"
+
+            viewModel.decreaseCount()
         }
 
 
@@ -82,7 +93,7 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putInt("count", viewModel.count)
+//        outState.putInt("count", viewModel.count)
     }
 
     //onSaveInstanceState에 저장된것을 받는 곳
@@ -96,6 +107,6 @@ class MainActivity : AppCompatActivity() {
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
 
-        viewModel.count = savedInstanceState.getInt("count")
+//        viewModel.count = savedInstanceState.getInt("count")
     }
 }
